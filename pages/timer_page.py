@@ -1,7 +1,7 @@
 import customtkinter as ctk
 import time
 import sqlite3
-from database import add_category
+from database import add_category, get_categories, log_time, get_category_id
 
 class addCategoriesWindow(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
@@ -60,7 +60,10 @@ class TimerPage(ctk.CTkFrame):
         self.timer_button.pack(pady=20)
 
         #dropdown menu for categories
-
+        self.values = get_categories()
+        self.optionmenu = ctk.CTkOptionMenu(self, values=self.values)
+        self.optionmenu.pack(pady=20)
+        self.optionmenu.set("Choose Category")
 
         #new window
         self.categories_button = ctk.CTkButton(self, text="Create New Category", command=self.open_CategoriesWindow)
@@ -68,13 +71,20 @@ class TimerPage(ctk.CTkFrame):
         #####
     def toggle_timer(self):
         if not self.running:
-            self.running = True
-            self.start_time = time.time()
-            self.timer_button.configure(text="Stop Timer")
-            self.update_timer()
+            if self.optionmenu.get() == "Choose Category":
+                return
+            else:
+                self.running = True
+                self.start_time = time.time()
+                self.timer_button.configure(text="Stop Timer")
+                self.update_timer()
 
         else:
+            category = self.optionmenu.get()
+            category_id = get_category_id(category)
             self.running = False
+            self.duration = time.time() - self.start_time
+            log_time(self.duration, category_id)
             self.timer_button.configure(text="Start Timer")
 
     def update_timer(self):
@@ -90,6 +100,7 @@ class TimerPage(ctk.CTkFrame):
             )
 
             self.after(1000, self.update_timer)
+
 
     def open_CategoriesWindow(self):
         if self.categories_window is None or not self.categories_window.winfo_exists():
