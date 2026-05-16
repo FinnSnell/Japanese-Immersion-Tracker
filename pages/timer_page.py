@@ -96,8 +96,7 @@ class TimerPage(ctk.CTkFrame):
             seconds = elapsed % 60
 
             self.timer_label.configure(
-                text=f"{hours:02}:{minutes:02}:{seconds:02}"
-            )
+                text=f"{hours:02}:{minutes:02}:{seconds:02}")
 
             self.after(1000, self.update_timer)
 

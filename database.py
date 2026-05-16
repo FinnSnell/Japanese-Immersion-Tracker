@@ -62,10 +62,7 @@ def get_category_id(category_name):
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
 
-    cursor.execute(
-        "SELECT id FROM categories WHERE name = ?",
-        (category_name,)
-    )
+    cursor.execute("SELECT id FROM categories WHERE name = ?",(category_name,))
 
     row = cursor.fetchone()
 
