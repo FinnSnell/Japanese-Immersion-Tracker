@@ -1,5 +1,6 @@
 import sqlite3
 from datetime import datetime
+from datetime import date
 file = "database.db"
 conn = sqlite3.connect(file)
 print("Database Sqlite3.db formed.")
@@ -78,7 +79,17 @@ def log_time(duration, category_id,):
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
 
-    cursor.execute("INSERT INTO time_logs (duration, date, category_id) VALUES (?, ?, ?)", (duration, datetime.now(), category_id))
+    cursor.execute("INSERT INTO time_logs (duration, date, category_id) VALUES (?, ?, ?)", (duration, date.today(), category_id))
     conn.commit()
     conn.close()
+
+#get todays logs for the dashbaord
+def get_today():
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    today = date.today().isoformat()
+    cursor.execute("SELECT SUM(duration) FROM time_logs WHERE date = ?", (today,))
+    result = cursor.fetchone()[0]
+    conn.close()
+    return result if result else 0
 
